@@ -1,0 +1,200 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+check-wtrm - Plugin to check web transactions.
+
+=head1 SYNOPSIS
+
+    check-wtrm [ OPTIONS ]
+
+    check-wtrm --help
+
+=head1 REPORTING BUGS
+
+Please report all bugs to <support(at)bloonix.de>.
+
+=head1 AUTHOR
+
+Jonny Schulz <support(at)bloonix.de>.
+
+=head1 POWERED BY
+
+     _    __ _____ _____ __  __ __ __   __
+    | |__|  |     |     |  \|  |__|\  \/  /
+    |  . |  |  |  |  |  |      |  | >    <
+    |____|__|_____|_____|__|\__|__|/__/\__\
+
+=head1 COPYRIGHT
+
+Copyright (C) 2014 by Jonny Schulz. All rights reserved.
+
+=cut
+
+use strict;
+use warnings;
+use Bloonix::Plugin;
+use Bloonix::IPC::Cmd;
+use Time::HiRes;
+use JSON;
+
+# --------------------------------------------------
+# Plugin options
+# --------------------------------------------------
+
+my $plugin = Bloonix::Plugin->new(verion => "0.1");
+
+$plugin->add_option(
+    name => "workflow",
+    option => "workflow",
+    value_type => "array",
+    value => "workflow",
+    mandatory => 1,
+    description => "This is the workflow to simulate end-users on the website."
+);
+
+$plugin->has_warning;
+$plugin->has_critical;
+$plugin->has_timeout(default => 30);
+
+# --------------------------------------------------
+# Parse options
+# --------------------------------------------------
+
+my $opt = $plugin->parse_options;
+
+if (ref $opt->{workflow} ne "ARRAY") {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "Invalid workflow object!"
+    );
+}
+
+# --------------------------------------------------
+# Execute the web transaction
+# --------------------------------------------------
+
+my $phantomjs = "/usr/local/lib/bloonix/bin/phantomjs";
+my $phantomjs_file = "/usr/local/lib/bloonix/js/bloonix-wtrm.js";
+
+my $json = JSON->new;
+my $hitime = Time::HiRes::gettimeofday();
+my $host_id = $plugin->host_id;
+my $service_id = $plugin->service_id;
+my $plugin_libdir = $plugin->plugin_libdir;
+my $config_json = "$plugin_libdir/bloonix-wtrm-config-$host_id-$service_id-$hitime.json";
+my $num_workflows = scalar @{$opt->{workflow}};
+my @result;
+
+open my $fh, ">", $config_json
+    or $plugin->exit(
+        status => "UNKNOWN",
+        message => "Unable to create temporary json file!"
+    );
+
+print $fh $json->encode($opt->{workflow});
+close $fh;
+
+my $timeout = $opt->{timeout} * 1000;
+my $ipc = Bloonix::IPC::Cmd->run(
+    command => "$phantomjs --ssl-protocol=tlsv1 --ignore-ssl-errors=yes $phantomjs_file file=$config_json noimg=true timeout=$timeout",
+    timeout => $opt->{timeout} + 15,
+    kill_signal => 9
+);
+
+if (@{$ipc->stderr}) {
+    print STDERR join("\n", $ipc->get_stderr), "\n";
+}
+
+# --------------------------------------------------
+# Check the result
+# --------------------------------------------------
+
+my $status = "OK";
+my $message = "";
+my $num = 1;
+my $time = 0;
+my $stats = {};
+
+eval {
+    foreach my $row ($ipc->get_stdout) {
+        my $res = $json->decode($row);
+        push @result, $res;
+
+        if (!$res->{status} || $res->{status} !~ /^(ok|err|done)\z/) {
+            $status = "CRITICAL";
+            $message = "an unexpected error occurs";
+            last;
+        }
+
+        if ($res->{status} eq "err") {
+            $status = "CRITICAL";
+            $message = $res->{message};
+            last;
+        }
+
+        if ($res->{status} eq "done") {
+            pop @result;
+            last;
+        }
+
+        if (!$res->{data} || ref $res->{data} ne "HASH") {
+            $status = "CRITICAL";
+            $message = "no data received for step $num";
+            next;
+        }
+
+        my $data = $res->{data};
+        my $step = $data->{step};
+        $time += $data->{took};
+
+        if (!$data->{success} && !$step->{acceptError}) {
+            $status = "CRITICAL";
+            $message = "workflow failed at step $num: action $step->{action}";
+            last;
+        }
+
+        $num++;
+    }
+};
+
+if ($@) {
+    print STDERR $@;
+}
+
+if ($status eq "OK") {
+    my $got_workflows = scalar @result;
+
+    if ($got_workflows != $num_workflows) {
+        $status = "CRITICAL";
+        $message = "Only $got_workflows of $num_workflows actions executed!";
+        $time = 0;
+    } elsif ($opt->{critical} && $time && $time/1000 >= $opt->{critical}) {
+        $status = "CRITICAL";
+    } elsif ($opt->{warning} && $time && $time/1000 >= $opt->{warning}) {
+        $status = "WARNING";
+    }
+} else {
+    $time = 0;
+}
+
+if (!$message) {
+    my $t = sprintf("%.3f", $time / 1000);
+    $message = "processed $num_workflows actions in ${t}s";
+}
+
+my %return = (
+    status => $status,
+    message => $message,
+    result => \@result
+);
+
+if ($time && !$ipc->timeout) {
+    $return{stats}{time} = $time;
+}
+
+if ($ipc->timeout) {
+    $return{tags} = "timeout";
+}
+
+$plugin->exit(%return);
