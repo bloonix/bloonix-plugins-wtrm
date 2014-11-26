@@ -17,14 +17,17 @@ install:
 		chmod 755 $(PREFIX)/lib/bloonix/plugins/$$file; \
 	done;
 
-	if test ! -e "$(PREFIX)/lib/bloonix/etc/plugins" ; then \
-		mkdir -p $(PREFIX)/lib/bloonix/etc/plugins; \
-		chmod 755 $(PREFIX)/lib/bloonix/etc/plugins; \
+	if test ! -e "$(PREFIX)/lib/bloonix/etc/plugins/wtrm" ; then \
+		mkdir -p $(PREFIX)/lib/bloonix/etc/plugins/; \
+		chmod 755 $(PREFIX)/lib/bloonix/etc/plugins/; \
 	fi;
 
 	cd plugins; for file in plugin-* ; do \
 		cp $$file $(PREFIX)/lib/bloonix/etc/plugins/; \
 		chmod 644 $(PREFIX)/lib/bloonix/etc/plugins/$$file; \
 	done;
+
+	mkdir -p $(PREFIX)/lib/bloonix/js;
+	cp js/bloonix-wtrm.js $(PREFIX)/lib/bloonix/js/;
 
 clean:

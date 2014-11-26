@@ -10,7 +10,7 @@
 export DH_VERBOSE=1
 
 PERL ?= /usr/bin/perl
-BUILDROOT = $(CURDIR)/debian/builddir
+BUILDROOT = $(CURDIR)/debian/bloonix-plugins-wtrm
 
 configure: configure-stamp
 configure-stamp:

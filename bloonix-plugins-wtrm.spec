@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.2
+Version: 0.3
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -44,14 +44,19 @@ rm -rf %{buildroot}
 
 %dir %{blxdir}
 %dir %{blxdir}/plugins
+%dir %{blxdir}/js
 %{blxdir}/plugins/check-*
 %{blxdir}/etc/plugins/plugin-*
+%{blxdir}/js/bloonix-wtrm.js
 
 %dir %attr(0755, root, root) %{docdir}
 %doc %attr(0444, root, root) %{docdir}/ChangeLog
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Wed Nov 26 2014 Jonny Schulz <js@bloonix.de> - 0.3-1
+- Install bloonix-wtrm.js.
+- First RPM and DEB package.
 * Mon Nov 03 2014 Jonny Schulz <js@bloonix.de> - 0.2-1
 - Updated the license information.
 * Mon Aug 25 2014 Jonny Schulz <js@bloonix.de> - 0.1-1

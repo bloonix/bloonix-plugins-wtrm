@@ -42,7 +42,13 @@ use JSON;
 # Plugin options
 # --------------------------------------------------
 
-my $plugin = Bloonix::Plugin->new(verion => "0.1");
+my $plugin = Bloonix::Plugin->new(verion => "0.2");
+
+$plugin->info(
+    "Please install PhantomJS on the server where the plugin is exexuted.",
+    "Install the command phantomjs to /usr/lib/bloonix/bin, /usr/local/lib/bloonix/bin"
+    "or to a path of the PATH variable."
+);
 
 $plugin->add_option(
     name => "workflow",
@@ -74,8 +80,36 @@ if (ref $opt->{workflow} ne "ARRAY") {
 # Execute the web transaction
 # --------------------------------------------------
 
-my $phantomjs = "/usr/local/lib/bloonix/bin/phantomjs";
-my $phantomjs_file = "/usr/local/lib/bloonix/js/bloonix-wtrm.js";
+my ($phantomjs, $bloonix_wtrm_js);
+
+if (-e "/usr/local/lib/bloonix/bin/phantomjs") {
+    $phantomjs = "/usr/local/lib/bloonix/bin/phantomjs";
+} elsif (-e "/usr/lib/bloonix/bin/phantomjs") {
+    $phantomjs = "/usr/lib/lib/bloonix/bin/phantomjs";
+} else {
+    $phantomjs = qx{which phantomjs};
+    chomp $phantomjs;
+}
+
+if (!$phantomjs) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "command 'phantomjs' not found"
+    );
+}
+
+if (-e "/usr/local/lib/bloonix/js/bloonix-wtrm.js") {
+    $bloonix_wtrm_js = "/usr/local/lib/bloonix/js/bloonix-wtrm.js";
+} elsif (-e "/usr/lib/bloonix/js/bloonix-wtrm.js") {
+    $bloonix_wtrm_js = "/usr/lib/bloonix/js/bloonix-wtrm.js";
+}
+
+if (!$bloonix_wtrm_js) {
+    $plugin->exit(
+        status => "UNKNOWN",
+        message => "command 'bloonix-wtrm.js' not found"
+    );
+}
 
 my $json = JSON->new;
 my $hitime = Time::HiRes::gettimeofday();
@@ -97,7 +131,7 @@ close $fh;
 
 my $timeout = $opt->{timeout} * 1000;
 my $ipc = Bloonix::IPC::Cmd->run(
-    command => "$phantomjs --ssl-protocol=tlsv1 --ignore-ssl-errors=yes $phantomjs_file file=$config_json noimg=true timeout=$timeout",
+    command => "$phantomjs --ssl-protocol=tlsv1 --ignore-ssl-errors=yes $bloonix_wtrm_js file=$config_json noimg=true timeout=$timeout",
     timeout => $opt->{timeout} + 15,
     kill_signal => 9
 );

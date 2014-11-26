@@ -1,3 +1,10 @@
+bloonix-plugins-wtrm (0.3-1) unstable; urgency=low
+
+    * Install bloonix-wtrm.js.
+    * First RPM and DEB package.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 26 Nov 2014 09:54:53 +0100
+
 bloonix-plugins-wtrm (0.2-1) unstable; urgency=low
 
     * Updated the license information.
