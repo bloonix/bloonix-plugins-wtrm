@@ -4,7 +4,12 @@ var WTRM = function(o) {
     var object = Extend({
         globalTimeout: 120000,
         pageWidth: 1600,
-        pageHeight: 800
+        pageHeight: 800,
+        globalSettings: {
+            loadImages: true,
+            resourceTimeout: 30000,
+            userAgent: "Bloonix-Web-Transaction-Monitor"
+        }
     }, o);
 
     // Validate the incoming request for allowed actions.
@@ -69,9 +74,9 @@ var WTRM = function(o) {
             width: this.pageWidth,
             height: this.pageHeight
         };
-        this.page.settings.loadImages = true;
-        this.page.settings.resourceTimeout = 30000;
-        this.page.settings.userAgent = "Bloonix-Web-Transaction-Monitor";
+        this.page.settings.loadImages = this.globalSettings.loadImages;
+        this.page.settings.resourceTimeout = this.globalSettings.resourceTimeout;
+        this.page.settings.userAgent = this.globalSettings.userAgent;
         this.page.onResourceReceived = function(res) {
             if (res.stage == "start") {
                 self.resourceStatus[res.url] = {
@@ -197,7 +202,7 @@ var WTRM = function(o) {
                 this.page.settings.password = step.password;
                 ret = { success: true };
             } else if (step.action == "doUserAgent") {
-                this.page.settings.userAgent = step.userAgent;
+                this.globalSettings.userAgent = step.userAgent;
                 ret = { success: true };
             } else {
                 ret = this.page.evaluate(this.evaluate, step);
