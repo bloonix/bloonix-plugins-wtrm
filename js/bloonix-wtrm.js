@@ -637,35 +637,10 @@ var WTRM = function(o) {
             return { success: false, message: "url '"+ o.url +"'not found" };
         }
 
-        if (o.bodySize != undefined) {
-            success = false;
-            var bodySize = url.bodySize || 0;
-
-            if (o.isEqual == true && bodySize === o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is not equal "+ o.bodySize +"!";
-            } else if (o.isNotEqual == true && bodySize !== o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is equal "+ o.bodySize +"!";
-            } else if (o.isGreaterEqual == true && bodySize >= o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is not greater or equal than "+ o.bodySize +"!";
-            } else if (o.isGreater == true && bodySize > o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is not greater than "+ o.bodySize +"!";
-            } else if (o.isLowerEqual == true && bodySize <= o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is not lower or equal than "+ o.bodySize +"!";
-            } else if (o.isLower == true && bodySize < o.bodySize) {
-                success = true;
-                message = "The bodySize of "+ bodySize +" is not lower than "+ o.bodySize +"!";
-            }
-        }
-
         for (var i = 0; i < toCheck.length; i++) {
-            var str = elements[i];
+            var str = toCheck[i];
 
-            if (o[str] && o[str] !== url[str]) {
+            if (o[str] && o[str] !== url[str].toString()) {
                 success = false;
                 message.push("The "+ str +" '"+ o[str] +"' does not match '"+ url[str] +"'!");
             }
