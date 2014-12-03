@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.3
+Version: 0.4
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Wed Dec 03 2014 Jonny Schulz <js@bloonix.de> - 0.4-1
+- Fixed UA setting in bloonix-wtrm.js.
+- Fixed the check checkUrl.
 * Wed Nov 26 2014 Jonny Schulz <js@bloonix.de> - 0.3-1
 - Install bloonix-wtrm.js.
 - First RPM and DEB package.
