@@ -184,8 +184,14 @@ var WTRM = function(o) {
             this.resourceStatus = {};
             this.openPage(step, next, result);
         } else if (step.action == "doSleep") {
+            result.start = new Date().getTime();
             setTimeout(function() {
+                result.stop = new Date().getTime();
+                result.took = result.stop - result.start;
+                result.success = true;
+                result.message = "sleeped for "+ step.ms +"ms";
                 self.createScreenshot(result);
+                self.ok(result);
                 self.runStep(next);
             }, parseInt(step.ms));
         } else if (step.action == "doWaitForElement") {
