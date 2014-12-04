@@ -1,3 +1,7 @@
+bloonix-plugins-wtrm (0.5) released at 2014-12-04
+
+    * Fixed doSleep function.
+
 bloonix-plugins-wtrm (0.4) released at 2014-12-03
 
     * Fixed UA setting in bloonix-wtrm.js.
