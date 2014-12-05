@@ -255,9 +255,21 @@ var WTRM = function(o) {
         }
 
         this.globalTimeoutObject = setTimeout(function() {
-            self.die("Global timeout exceeded!");
-            phantom.exit();
+            self.handleGlobalTimeout();
         }, timeout);
+    };
+
+    object.handleGlobalTimeout = function() {
+        var result = this._result;
+        result.success = false;
+        result.message = "Global timeout exceeded!";
+        if (result.start === undefined) {
+            result.start = 0;
+        }
+        result.stop = new Date().getTime();
+        result.took = result.stop - result.start;
+        this.ok(result);
+        phantom.exit();
     };
 
     object.readConfig = function() {
