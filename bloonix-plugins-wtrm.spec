@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.5
+Version: 0.6
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Fri Dec 05 2014 Jonny Schulz <js@bloonix.de> - 0.6-1
+- Ignoring "Unsafe JavaScript attempt" messages of PhantomJS.
 * Thu Dec 04 2014 Jonny Schulz <js@bloonix.de> - 0.5-1
 - Fixed doSleep function.
 * Wed Dec 03 2014 Jonny Schulz <js@bloonix.de> - 0.4-1

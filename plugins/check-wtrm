@@ -153,6 +153,11 @@ my $stats = {};
 
 eval {
     foreach my $row ($ipc->get_stdout) {
+        # PhantomJS bug?
+        if ($row =~ /Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL/) {
+            next;
+        }
+
         my $res = $json->decode($row);
         push @result, $res;
 
