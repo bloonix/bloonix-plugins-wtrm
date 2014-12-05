@@ -42,7 +42,7 @@ use JSON;
 # Plugin options
 # --------------------------------------------------
 
-my $plugin = Bloonix::Plugin->new(verion => "0.2");
+my $plugin = Bloonix::Plugin->new(verion => "0.3");
 
 $plugin->info(join(" ",
     "Please install PhantomJS on the server where the plugin is exexuted.",
