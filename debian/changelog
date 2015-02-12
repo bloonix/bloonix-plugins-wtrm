@@ -1,3 +1,9 @@
+bloonix-plugins-wtrm (0.7-1) unstable; urgency=low
+
+    * New feature: it's now possible to search for tags and attributes.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 12 Feb 2015 20:24:42 +0100
+
 bloonix-plugins-wtrm (0.6-1) unstable; urgency=low
 
     * Ignoring "Unsafe JavaScript attempt" messages of PhantomJS.

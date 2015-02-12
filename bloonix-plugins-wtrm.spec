@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.6
+Version: 0.7
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Thu Feb 12 2015 Jonny Schulz <js@bloonix.de> - 0.7-1
+- New feature: it's now possible to search for tags and attributes.
 * Fri Dec 05 2014 Jonny Schulz <js@bloonix.de> - 0.6-1
 - Ignoring "Unsafe JavaScript attempt" messages of PhantomJS.
 * Thu Dec 04 2014 Jonny Schulz <js@bloonix.de> - 0.5-1
