@@ -615,7 +615,18 @@ var WTRM = function(o) {
         // Action: checkIfElementExists + doWaitForElement
         else if (o.action == "checkIfElementExists" || o.action == "doWaitForElement") {
             if (elements.length > 0) {
-                ret = true;
+                if (o.text !== undefined && o.text.length) {
+                    for (var i = 0; i < elements.length; i++) {
+                        var obj = elements[i];
+
+                        if (obj.innerText == o.text) {
+                            ret = true;
+                            break;
+                        }
+                    }
+                } else {
+                    ret = true;
+                }
             }
         }
 
