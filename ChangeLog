@@ -1,3 +1,7 @@
+bloonix-plugins-wtrm (0.7) released at 2015-XX-XX
+
+    * New feature: it's now possible to search for tags and attributes.
+
 bloonix-plugins-wtrm (0.6) released at 2014-12-05
 
     * Ignoring "Unsafe JavaScript attempt" messages of PhantomJS.

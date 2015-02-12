@@ -28,8 +28,6 @@ var WTRM = function(o) {
         checkUrl: true,
         checkIfElementExists: true,
         checkIfElementNotExists: true,
-        checkIfElementHasContent: true,
-        checkIfElementHasNotContent: true,
         checkIfElementHasText: true,
         checkIfElementHasNotText: true,
         checkIfElementHasHTML: true,
@@ -366,8 +364,8 @@ var WTRM = function(o) {
     // START evaluate
     object.evaluate = function(o) {
         var ret = false,
-            message, elements = [], debug = [],
-            eId, eClass, eName;
+            message = "", elements = [], debug = [],
+            eId, eClass, eName, eTag, eTagNum, eTagAttrs = [];
 
         var searchForSubElements = function(element, attr, value) {
             if (element) {
@@ -386,11 +384,54 @@ var WTRM = function(o) {
         };
 
         var searchForObjects = function() {
+            /*  tagRegex
+
+                Valid strings:
+
+                    <h1 id="abc" class="foo bar baz">
+                    <h1 id="abc" a-b-c="foo bar baz">
+                    <h1[1]>
+                    <h1[5] id="abc" abc='foo bar baz'>
+                    <h1[99] id="abc" abc="foo bar baz">
+                    <h1>
+
+                Invalid strings:
+
+                    <h1 id='abc" class="foo bar baz">
+                    <h1[100]>
+                    <h1 id="abc" x s s="">
+                    <h1 id="abc'>
+            */
+            var tagRegex = /^<\s*([a-zA-Z0-9]{1,16})(?:\[(\d{1,2})\]){0,1}((:?\s+[a-zA-Z0-9_\-]+=(?:'[^']*'|"[^"]*"))*)\s*>$/;
+
             if (o.element) {
                 if (/^#/.test(o.element)) {
                     eId = o.element.replace(/^#/, "");
                 } else if (/^\./.test(o.element)) {
                     eClass = o.element.replace(/^\./, "");
+                } else if (tagRegex.test(o.element)) {
+                    var m = tagRegex.exec(o.element);
+                    m.shift();
+                    eTag = m.shift();
+                    eTagNum = m.shift();
+                    var attrs = m.shift();
+
+                    if (eTagNum !== undefined) {
+                        eTagNum = parseInt(eTagNum) - 1;
+                    }
+
+                    if (attrs !== undefined && /\s+[a-zA-Z0-9_\-]+=(?:'[^']*'|"[^"]*")/.test(attrs)) {
+                        var a = attrs.match(/\s+([a-zA-Z0-9_\-]+=(?:'[^']*'|"[^"]*"))/g);
+
+                        for (var i = 0; i < a.length; i++) {
+                            a[i] = a[i].replace(/^\s+/, "");
+                            a[i] = a[i].replace(/\s+$/, "");
+                            var kv = a[i].split("=");
+                            kv[1] = kv[1].replace(/^["']/, "");
+                            kv[1] = kv[1].replace(/["']$/, "");
+                            eTagAttrs.push({ attr: kv[0], value: kv[1] });
+                        }
+                    }
                 } else {
                     eName = o.element;
                 }
@@ -422,6 +463,61 @@ var WTRM = function(o) {
                             e = searchForSubElements(p, "name", eName);
                         } else {
                             e = p.getElementsByName(eName);
+                        }
+                    } else if (eTag) {
+                        var tags = p.getElementsByTagName(eTag);
+
+                        // No attributes and no tag num set:
+                        //   <a>, get first
+                        if (eTagNum === undefined && eTagAttrs.length == 0) {
+                            e = [ tags[0] ];
+                        }
+
+                        // No atributes set:
+                        //   <a[5]>, get fifth
+                        else if (eTagNum !== undefined && eTagAttrs.length == 0) {
+                            e = [ tags[eTagNum] ];
+
+                        }
+
+                        // Attributes are set and maybe a tag num:
+                        //   <a[5] foo="bar">, parse attributes of the fifth a tag
+                        //   <a foo="bar">, parse attributes of all a tags
+                        else {
+                            var t;
+
+                            // Tag num is set:
+                            //   <a[5] foo="bar">
+                            if (eTagNum !== undefined) {
+                                t = [ tags[eTagNum] ];
+                            }
+
+                            // No tag num is set:
+                            //   <a foo="bar">
+                            else {
+                                t = tags;
+                            }
+
+                            // Now parse the attribues for all found tags
+                            for (var x = 0; x < t.length; x++) {
+                                var tag = t[x],
+                                    foundAttrs = 0;
+
+                                for (var y = 0; y < eTagAttrs.length; y++) {
+                                    var attr = eTagAttrs[y];
+
+                                    if (tag.getAttribute(attr.attr) === attr.value) {
+                                        foundAttrs++;
+                                    }
+                                }
+
+                                if (foundAttrs === eTagAttrs.length) {
+                                    if (e === undefined) {
+                                        e = [];
+                                    }
+                                    e.push(tag);
+                                }
+                            }
                         }
                     }
                 }
