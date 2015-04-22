@@ -54,9 +54,9 @@ $plugin->add_option(
     name => "workflow",
     option => "workflow",
     value => "workflow",
-    value_type => "hash",
+    value_type => "array",
     mandatory => 1,
-    multiple => 1,
+    multiple => 0,
     description => "This is the workflow to simulate end-users on the website."
 );
 
