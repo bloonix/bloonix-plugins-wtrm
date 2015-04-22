@@ -1,3 +1,9 @@
+bloonix-plugins-wtrm (0.9-1) unstable; urgency=low
+
+    * Kicked value type array.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 22 Apr 2015 22:17:27 +0200
+
 bloonix-plugins-wtrm (0.8-1) unstable; urgency=low
 
     * New feature: doWaitForElement can now wait for text within an element too.

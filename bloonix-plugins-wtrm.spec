@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.8
+Version: 0.9
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -13,7 +13,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Source0: http://download.bloonix.de/sources/%{name}-%{version}.tar.gz
-Requires: bloonix-core
+Requires: bloonix-core >= 0.19
 AutoReqProv: no
 
 %description
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Wed Apr 22 2015 Jonny Schulz <js@bloonix.de> - 0.9-1
+- Kicked value type array.
 * Thu Feb 12 2015 Jonny Schulz <js@bloonix.de> - 0.8-1
 - New feature: doWaitForElement can now wait for text within an element too.
 * Thu Feb 12 2015 Jonny Schulz <js@bloonix.de> - 0.7-1
