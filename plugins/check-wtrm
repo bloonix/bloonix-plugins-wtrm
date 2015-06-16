@@ -115,8 +115,8 @@ if (!$bloonix_wtrm_js) {
 
 my $json = JSON->new;
 my $hitime = Time::HiRes::gettimeofday();
-my $host_id = $plugin->host_id;
-my $service_id = $plugin->service_id;
+my $host_id = $opt->{bloonix_host_id};
+my $service_id = $opt->{bloonix_service_id};
 my $plugin_libdir = $plugin->plugin_libdir;
 my $config_json = "$plugin_libdir/bloonix-wtrm-config-$host_id-$service_id-$hitime.json";
 my $num_workflows = scalar @{$opt->{workflow}};

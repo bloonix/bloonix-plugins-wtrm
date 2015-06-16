@@ -1,3 +1,8 @@
+bloonix-plugins-wtrm (0.10) released at 2015-06-16
+
+    * The host id and service id is available as options since
+      bloonix-core 0.20.
+
 bloonix-plugins-wtrm (0.9) released at 2015-04-22
 
     * Kicked value type array.
