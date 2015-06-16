@@ -1,3 +1,10 @@
+bloonix-plugins-wtrm (0.10-1) unstable; urgency=low
+
+    * The host id and service id is available as options since
+      bloonix-core 0.20.
+
+ -- Jonny Schulz <js@bloonix.de>  Tue, 16 Jun 2015 18:15:35 +0200
+
 bloonix-plugins-wtrm (0.9-1) unstable; urgency=low
 
     * Kicked value type array.
