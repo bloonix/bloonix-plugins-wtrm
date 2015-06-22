@@ -24,7 +24,12 @@ var WTRM = function(o) {
         doUncheck: true,
         doSelect: true,
         doSleep: true,
+        doTriggerEvent: true,
         doWaitForElement: true,
+        doSwitchToFrame: true,
+        doSwitchToParentFrame: true,
+        doDumpContent: true,
+        doDumpFrameContent: true,
         checkUrl: true,
         checkIfElementExists: true,
         checkIfElementNotExists: true,
@@ -94,6 +99,9 @@ var WTRM = function(o) {
         this.page.onResourceError = function(resourceError) {
             self.page.reason = resourceError.errorString;
             self.page.reasonUrl = resourceError.url;
+        };
+        this.onPageCreate = function(newPage) {
+            self.page = newPage;
         };
     };
 
@@ -194,6 +202,35 @@ var WTRM = function(o) {
             }, parseInt(step.ms));
         } else if (step.action == "doWaitForElement") {
             this.waitForElement(step, next, result);
+        } else if (step.action == "doSwitchToFrame") {
+            result.start = new Date().getTime();
+            this.page.switchToFrame(step.name);
+            result.stop = new Date().getTime();
+            result.took = result.stop - result.start;
+            if (this.page.frameName === step.name) {
+                result.success = true;
+                result.message = "frame successfully switched";
+            } else {
+                result.success = false;
+                result.message = "frame "+ step.name +" does not exist";
+            }
+            this.ok(result);
+            this.runStep(next);
+        } else if (step.action == "doSwitchToParentFrame") {
+            result.start = new Date().getTime();
+            this.page.switchToParentFrame();
+            result.stop = new Date().getTime();
+            result.took = result.stop - result.start;
+            result.message = "frame successfully switched";
+            result.success = true;
+            this.ok(result);
+            this.runStep(next);
+        } else if (step.action == "doDumpContent") {
+            console.log(this.page.content);
+            this.runStep(next);
+        } else if (step.action == "doDumpFrameContent") {
+            console.log(this.page.frameContent);
+            this.runStep(next);
         } else {
             result.start = new Date().getTime();
             var url = this.resourceStatus[step.url];
@@ -544,6 +581,15 @@ var WTRM = function(o) {
 
                 if (tag == "input" || tag == "textarea") {
                     obj.value = o.value;
+
+                    if (o["event"] === "focus") {
+                        obj.focus();
+                    } else {
+                        var event = document.createEvent("UIEvents");
+                        event.initUIEvent(o["event"], true, true, window, 1);
+                        obj.dispatchEvent(event);
+                    }
+
                     ret = true;
                 } else {
                     message = "HTML tag '"+ tag +"' is not a valid element to fill in form data!";
@@ -559,6 +605,7 @@ var WTRM = function(o) {
                 var obj = elements[i],
                     event = document.createEvent("MouseEvents");
                 event.initMouseEvent("click", true, true, window, 1, 0, 0);
+                obj.removeAttribute("target");
                 obj.dispatchEvent(event);
                 ret = true;
             }
@@ -609,6 +656,23 @@ var WTRM = function(o) {
                         }
                     }
                 }
+            }
+        }
+
+        // Action: doTriggerEvent
+        else if (o.action == "doTriggerEvent") {
+            for (var i = 0; i < elements.length; i++) {
+                var obj = elements[i];
+
+                if (o["event"] === "focus") {
+                    obj.focus();
+                } else {
+                    var event = document.createEvent("UIEvents");
+                    event.initUIEvent(o["event"], true, true, window, 1);
+                    obj.dispatchEvent(event);
+                }
+
+                ret = true;
             }
         }
 
