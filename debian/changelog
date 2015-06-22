@@ -1,3 +1,10 @@
+bloonix-plugins-wtrm (0.11-1) unstable; urgency=low
+
+    * Added new features: doTriggerEvent, doSwitchToFrame,doSwitchToParentFrame,
+      doDumpContent and doDumpFrameContent.
+
+ -- Jonny Schulz <js@bloonix.de>  Mon, 22 Jun 2015 20:39:56 +0200
+
 bloonix-plugins-wtrm (0.10-1) unstable; urgency=low
 
     * The host id and service id is available as options since

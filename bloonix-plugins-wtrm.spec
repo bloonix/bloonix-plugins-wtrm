@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.10
+Version: 0.11
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Mon Jun 22 2015 Jonny Schulz <js@bloonix.de> - 0.11-1
+- Added new features: doTriggerEvent, doSwitchToFrame,doSwitchToParentFrame,
+  doDumpContent and doDumpFrameContent.
 * Tue Jun 16 2015 Jonny Schulz <js@bloonix.de> - 0.10-1
 - The host id and service id is available as options since
   bloonix-core 0.20.
