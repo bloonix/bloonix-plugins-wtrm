@@ -55,7 +55,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Jun 22 2015 Jonny Schulz <js@bloonix.de> - 0.11-1
-- Added new features: doTriggerEvent, doSwitchToFrame,doSwitchToParentFrame,
+- Added new features: doTriggerEvent, doSwitchToFrame, doSwitchToParentFrame,
   doDumpContent and doDumpFrameContent.
 * Tue Jun 16 2015 Jonny Schulz <js@bloonix.de> - 0.10-1
 - The host id and service id is available as options since

@@ -1,6 +1,6 @@
 bloonix-plugins-wtrm (0.11-1) unstable; urgency=low
 
-    * Added new features: doTriggerEvent, doSwitchToFrame,doSwitchToParentFrame,
+    * Added new features: doTriggerEvent, doSwitchToFrame, doSwitchToParentFrame,
       doDumpContent and doDumpFrameContent.
 
  -- Jonny Schulz <js@bloonix.de>  Mon, 22 Jun 2015 20:39:56 +0200

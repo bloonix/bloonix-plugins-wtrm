@@ -1,6 +1,6 @@
 bloonix-plugins-wtrm (0.11) released at 2015-06-22
 
-    * Added new features: doTriggerEvent, doSwitchToFrame,doSwitchToParentFrame,
+    * Added new features: doTriggerEvent, doSwitchToFrame, doSwitchToParentFrame,
       doDumpContent and doDumpFrameContent.
 
 bloonix-plugins-wtrm (0.10) released at 2015-06-16
