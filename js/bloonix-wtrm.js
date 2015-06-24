@@ -5,6 +5,7 @@ var WTRM = function(o) {
         globalTimeout: 120000,
         pageWidth: 1600,
         pageHeight: 800,
+        newPage: false,
         globalSettings: {
             loadImages: true,
             resourceTimeout: 30000,
@@ -28,6 +29,8 @@ var WTRM = function(o) {
         doWaitForElement: true,
         doSwitchToFrame: true,
         doSwitchToParentFrame: true,
+        doSwitchToNewPage: true,
+        doSwitchToMainPage: true,
         doDumpContent: true,
         doDumpFrameContent: true,
         checkUrl: true,
@@ -100,8 +103,10 @@ var WTRM = function(o) {
             self.page.reason = resourceError.errorString;
             self.page.reasonUrl = resourceError.url;
         };
-        this.onPageCreate = function(newPage) {
-            self.page = newPage;
+        this.page.onPageCreated = function onPageCreated(newPage) {
+            newPage.onLoadFinished = function onLoadFinished() {
+                self.newPage = newPage;
+            };
         };
     };
 
@@ -158,6 +163,15 @@ var WTRM = function(o) {
         }
     };
 
+    object.startRuntime = function(r) {
+        r.start = new Date().getTime();
+    };
+
+    object.stopRuntime = function(r) {
+        r.stop = new Date().getTime();
+        r.took = r.stop - r.start;
+    };
+
     object.runSteps = function() {
         Debug("runSteps()");
         this.setGlobalTimeout();
@@ -190,10 +204,9 @@ var WTRM = function(o) {
             this.resourceStatus = {};
             this.openPage(step, next, result);
         } else if (step.action == "doSleep") {
-            result.start = new Date().getTime();
+            this.startRuntime(result);
             setTimeout(function() {
-                result.stop = new Date().getTime();
-                result.took = result.stop - result.start;
+                self.stopRuntime(result);
                 result.success = true;
                 result.message = "sleeped for "+ step.ms +"ms";
                 self.createScreenshot(result);
@@ -203,10 +216,9 @@ var WTRM = function(o) {
         } else if (step.action == "doWaitForElement") {
             this.waitForElement(step, next, result);
         } else if (step.action == "doSwitchToFrame") {
-            result.start = new Date().getTime();
+            this.startRuntime(result);
             this.page.switchToFrame(step.name);
-            result.stop = new Date().getTime();
-            result.took = result.stop - result.start;
+            this.stopRuntime(result);
             if (this.page.frameName === step.name) {
                 result.success = true;
                 result.message = "frame successfully switched";
@@ -217,14 +229,17 @@ var WTRM = function(o) {
             this.ok(result);
             this.runStep(next);
         } else if (step.action == "doSwitchToParentFrame") {
-            result.start = new Date().getTime();
+            this.startRuntime(result);
             this.page.switchToParentFrame();
-            result.stop = new Date().getTime();
-            result.took = result.stop - result.start;
+            this.stopRuntime(result);
             result.message = "frame successfully switched";
             result.success = true;
             this.ok(result);
             this.runStep(next);
+        } else if (step.action == "doSwitchToNewPage") {
+            this.switchToNewPage(step, next, result);
+        } else if (step.action == "doSwitchToMainPage") {
+            this.switchToMainPage(step, next, result);
         } else if (step.action == "doDumpContent") {
             console.log(this.page.content);
             this.runStep(next);
@@ -232,7 +247,7 @@ var WTRM = function(o) {
             console.log(this.page.frameContent);
             this.runStep(next);
         } else {
-            result.start = new Date().getTime();
+            this.startRuntime(result);
             var url = this.resourceStatus[step.url];
             var ret;
 
@@ -252,8 +267,7 @@ var WTRM = function(o) {
                 }
             }
 
-            result.stop = new Date().getTime();
-            result.took = result.stop - result.start;
+            this.stopRuntime(result);
             this.createScreenshot(result);
 
             if (ret == undefined) {
@@ -271,7 +285,7 @@ var WTRM = function(o) {
             this.ok(result);
 
             if (result.success || step.acceptError == true) {
-                setTimeout(function() { self.runStep(next) }, 50);
+                setTimeout(function() { self.runStep(next) }, 100);
             } else {
                 self.done();
             }
@@ -323,13 +337,11 @@ var WTRM = function(o) {
         Debug("doUrl()");
 
         var self = this;
-        result.start = new Date().getTime();
-
+        this.startRuntime(result);
         this.createPage();
 
         this.page.open(step.url, function(status) {
-            result.stop = new Date().getTime();
-            result.took = result.stop - result.start;
+            self.stopRuntime(result);
             result.status = self.lastRequestStatus;
             result.url = self.lastRequestURL;
             self.createScreenshot(result);
@@ -350,25 +362,57 @@ var WTRM = function(o) {
         });
     };
 
-    object.waitForElement = function(step, next, result, startTime, endTime) {
+    object.waitForElement = function(step, next, result, endTime) {
         Debug("waitForElement()");
-        if (startTime == undefined) {
-            startTime = result.start = new Date().getTime();
-            endTime = startTime + 30000;
+        if (result.start === undefined) {
+            this.startRuntime(result);
+            endTime = result.start + 30000;
         }
 
-        this.checkIfElementExists(step, next, result, startTime, endTime);
+        this.checkIfElementExists(step, next, result, endTime);
     };
 
-    object.checkIfElementExists = function(step, next, result, startTime, endTime) {
+    object.switchToNewPage = function(step, next, result) {
+        Debug("switchToNewPage()");
+        var self = this;
+
+        if (!result.start) {
+            this.startRuntime(result);
+            this.switchToNewPage(step, next, result);
+        } else if (this.newPage) {
+            this.stopRuntime(result);
+            this.mainPage = this.page;
+            this.page = this.newPage;
+            result.success = true;
+            setTimeout(function() { self.runStep(next) }, 100);
+        } else {
+            setTimeout(
+                function() { self.switchToNewPage(step, next, result) },
+                50
+            );
+        }
+    };
+
+    object.switchToMainPage = function(step, next, result) {
+        this.startRuntime(result);
+        if (this.mainPage) {
+            this.page = this.mainPage;
+            result.success = true;
+        } else {
+            result.success = false;
+        }
+        this.stopRuntime(result);
+        this.runStep(next);
+    };
+
+    object.checkIfElementExists = function(step, next, result, endTime) {
         Debug("checkIfElementExists()");
         var self = this,
             ret = this.page.evaluate(this.evaluate, step),
             curTime = new Date().getTime();
 
         if (curTime >= endTime || (ret && ret.success == true)) {
-            result.stop = new Date().getTime();
-            result.took = result.stop - result.start;
+            this.stopRuntime(result);
             this.createScreenshot(result);
 
             if (ret.success == true) {
@@ -387,8 +431,8 @@ var WTRM = function(o) {
             }
         } else {
             setTimeout(function() {
-                self.waitForElement(step, next, result, startTime, endTime);
-            }, 200);
+                self.waitForElement(step, next, result, endTime);
+            }, 50);
         }
     };
 
@@ -605,7 +649,7 @@ var WTRM = function(o) {
                 var obj = elements[i],
                     event = document.createEvent("MouseEvents");
                 event.initMouseEvent("click", true, true, window, 1, 0, 0);
-                obj.removeAttribute("target");
+                //obj.removeAttribute("target");
                 obj.dispatchEvent(event);
                 ret = true;
             }

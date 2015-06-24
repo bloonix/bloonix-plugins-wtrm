@@ -1,3 +1,7 @@
+bloonix-plugins-wtrm (0.12) released at 2015-06-23
+
+    * Added new features: doSwitchToNewPage and doSwitchToMainPage.
+
 bloonix-plugins-wtrm (0.11) released at 2015-06-22
 
     * Added new features: doTriggerEvent, doSwitchToFrame, doSwitchToParentFrame,
