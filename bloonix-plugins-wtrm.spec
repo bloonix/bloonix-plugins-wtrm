@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.11
+Version: 0.12
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Wed Jun 24 2015 Jonny Schulz <js@bloonix.de> - 0.12-1
+- Added new features: doSwitchToNewPage and doSwitchToMainPage.
 * Mon Jun 22 2015 Jonny Schulz <js@bloonix.de> - 0.11-1
 - Added new features: doTriggerEvent, doSwitchToFrame, doSwitchToParentFrame,
   doDumpContent and doDumpFrameContent.
