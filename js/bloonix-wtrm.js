@@ -384,6 +384,7 @@ var WTRM = function(o) {
             this.mainPage = this.page;
             this.page = this.newPage;
             result.success = true;
+            this.ok(result);
             setTimeout(function() { self.runStep(next) }, 100);
         } else {
             setTimeout(
@@ -402,6 +403,7 @@ var WTRM = function(o) {
             result.success = false;
         }
         this.stopRuntime(result);
+        this.ok(result);
         this.runStep(next);
     };
 
