@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.13
+Version: 0.14
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Mon Nov 30 2015 Jonny Schulz <js@bloonix.de> - 0.14-1
+- Added a info that check-wtrm does not validate SSL certificates.
 * Mon Nov 30 2015 Jonny Schulz <js@bloonix.de> - 0.13-1
 - Delete temporary wtrm files.
 * Wed Jun 24 2015 Jonny Schulz <js@bloonix.de> - 0.12-1
