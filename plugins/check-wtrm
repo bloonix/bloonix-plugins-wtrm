@@ -238,4 +238,5 @@ if ($ipc->timeout) {
     $return{tags} = "timeout";
 }
 
+unlink($config_json);
 $plugin->exit(%return);
