@@ -47,7 +47,9 @@ my $plugin = Bloonix::Plugin->new(verion => "0.3");
 $plugin->info(join(" ",
     "Please install PhantomJS on the server where the plugin is exexuted.",
     "Install the command phantomjs to /usr/lib/bloonix/bin, /usr/local/lib/bloonix/bin",
-    "or to a path of the PATH variable."
+    "or to a path of the PATH variable.\n\nNote that PhantomJS does not validate",
+    "SSL certificates. If you want to validate SSL certificates, then use a HTTP check",
+    "instead."
 ));
 
 $plugin->add_option(
