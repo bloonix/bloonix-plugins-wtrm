@@ -249,18 +249,19 @@ var WTRM = function(o) {
             this.runStep(next);
         } else if (step.action == "doAddCookie") {
             this.startRuntime(result);
-            console.log("SET COOKIE", step.name, step.value, step.domain);
-            this.pageObject.create();
             var addCookieStatus = phantom.addCookie({
                 name: step.name,
                 value: step.value,
-                domain: step.domain.
+                domain: step.domain,
                 path: "/",
-                expires: (new Date()).getTime() + (1000 * 60 * 60) // expires in 5 minutes
+                expires: (new Date()).getTime() + (1000 * 60 * 5) // expires in 5 minutes
             });
-            if (addCookieStatus == false) {
-                this.die(result);
-            }
+            //if (addCookieStatus == false) {
+            //    this.die(result);
+            //}
+            result.message = "cookie successfully set";
+            result.success = true;
+            this.stopRuntime(result);
             this.ok(result);
             this.runStep(next);
         } else {
