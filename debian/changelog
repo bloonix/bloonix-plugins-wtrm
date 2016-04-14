@@ -1,3 +1,9 @@
+bloonix-plugins-wtrm (0.16-1) unstable; urgency=low
+
+    * Add new action doAddCookie.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 14 Apr 2016 18:58:51 +0200
+
 bloonix-plugins-wtrm (0.15-1) unstable; urgency=low
 
     * Extra release because the gpg key of bloonix is updated.

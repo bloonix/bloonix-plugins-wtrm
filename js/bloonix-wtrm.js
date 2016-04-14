@@ -33,6 +33,7 @@ var WTRM = function(o) {
         doSwitchToMainPage: true,
         doDumpContent: true,
         doDumpFrameContent: true,
+        doAddCookie: true,
         checkUrl: true,
         checkIfElementExists: true,
         checkIfElementNotExists: true,
@@ -245,6 +246,22 @@ var WTRM = function(o) {
             this.runStep(next);
         } else if (step.action == "doDumpFrameContent") {
             console.log(this.page.frameContent);
+            this.runStep(next);
+        } else if (step.action == "doAddCookie") {
+            this.startRuntime(result);
+            console.log("SET COOKIE", step.name, step.value, step.domain);
+            this.pageObject.create();
+            var addCookieStatus = phantom.addCookie({
+                name: step.name,
+                value: step.value,
+                domain: step.domain.
+                path: "/",
+                expires: (new Date()).getTime() + (1000 * 60 * 60) // expires in 5 minutes
+            });
+            if (addCookieStatus == false) {
+                this.die(result);
+            }
+            this.ok(result);
             this.runStep(next);
         } else {
             this.startRuntime(result);
