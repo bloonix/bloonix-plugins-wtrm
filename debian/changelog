@@ -1,3 +1,10 @@
+bloonix-plugins-wtrm (0.17-1) unstable; urgency=low
+
+    * Fixed bloonix-wtrm.js: screenshots are not generated any more
+      on doUserAgent and doAddCookie.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 24 Nov 2016 10:48:48 +0100
+
 bloonix-plugins-wtrm (0.16-1) unstable; urgency=low
 
     * Add new action doAddCookie.

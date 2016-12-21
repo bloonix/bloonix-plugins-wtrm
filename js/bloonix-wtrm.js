@@ -286,7 +286,10 @@ var WTRM = function(o) {
             }
 
             this.stopRuntime(result);
-            this.createScreenshot(result);
+
+            if (step.action != "doUserAgent" && step.action != "doAddCookie") {
+                this.createScreenshot(result);
+            }
 
             if (ret == undefined) {
                 result.success = false;
