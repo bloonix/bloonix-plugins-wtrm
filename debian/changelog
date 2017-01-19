@@ -1,3 +1,9 @@
+bloonix-plugins-wtrm (0.18-1) unstable; urgency=low
+
+    * Fixed utf8 issues.
+
+ -- Jonny Schulz <js@bloonix.de>  Thu, 19 Jan 2017 13:12:42 +0100
+
 bloonix-plugins-wtrm (0.17-1) unstable; urgency=low
 
     * Fixed bloonix-wtrm.js: screenshots are not generated any more

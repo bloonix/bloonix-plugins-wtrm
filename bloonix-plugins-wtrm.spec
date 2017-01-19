@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.17
+Version: 0.18
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Thu Jan 19 2017 Jonny Schulz <js@bloonix.de> - 0.18-1
+- Fixed utf8 issues.
 * Thu Nov 24 2016 Jonny Schulz <js@bloonix.de> - 0.17-1
 - Fixed bloonix-wtrm.js: screenshots are not generated any more
   on doUserAgent and doAddCookie.

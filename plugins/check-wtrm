@@ -130,7 +130,7 @@ open my $fh, ">", $config_json
         message => "Unable to create temporary json file!"
     );
 
-print $fh $json->encode($opt->{workflow});
+print $fh $json->utf8->encode($opt->{workflow});
 close $fh;
 
 my $timeout = $opt->{timeout} * 1000;
