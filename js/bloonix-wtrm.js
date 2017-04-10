@@ -38,6 +38,7 @@ var WTRM = function(o) {
         checkIfElementExists: true,
         checkIfElementNotExists: true,
         checkIfElementHasText: true,
+        checkIfElementMatchText: true,
         checkIfElementHasNotText: true,
         checkIfElementHasHTML: true,
         checkIfElementHasNotHTML: true,
@@ -779,6 +780,20 @@ var WTRM = function(o) {
 
                 if (obj.innerText == o.text) {
                     ret = o.action == "checkIfElementHasText" ? true : false;
+                    break;
+                }
+            }
+        }
+
+        // Action: checkIfElementMatchText
+        else if (o.action == "checkIfElementMatchText") {
+            var re = new RegExp(o.text, "g");
+
+            for (var i = 0; i < elements.length; i++) {
+                var obj = elements[i];
+
+                if (obj.innerText.match(re)) {
+                    ret = true;
                     break;
                 }
             }
