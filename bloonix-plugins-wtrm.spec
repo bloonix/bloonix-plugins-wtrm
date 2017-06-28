@@ -1,6 +1,6 @@
 Summary: Bloonix plugins for web transaction.
 Name: bloonix-plugins-wtrm
-Version: 0.20
+Version: 0.21
 Release: 1%{dist}
 License: Commercial
 Group: Utilities/System
@@ -54,6 +54,8 @@ rm -rf %{buildroot}
 %doc %attr(0444, root, root) %{docdir}/LICENSE
 
 %changelog
+* Wed Jun 28 2017 Jonny Schulz <js@bloonix.de> - 0.21-1
+- Added param --ssl-protocol for phantomjs.
 * Wed Mar 29 2017 Jonny Schulz <js@bloonix.de> - 0.20-1
 - Implemented checkIfElementMatchText.
 * Tue Feb 21 2017 Jonny Schulz <js@bloonix.de> - 0.19-1

@@ -1,3 +1,9 @@
+bloonix-plugins-wtrm (0.21-1) unstable; urgency=low
+
+    * Added param --ssl-protocol for phantomjs.
+
+ -- Jonny Schulz <js@bloonix.de>  Wed, 28 Jun 2017 16:24:51 +0200
+
 bloonix-plugins-wtrm (0.20-1) unstable; urgency=low
 
     * Implemented checkIfElementMatchText.

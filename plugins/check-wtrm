@@ -42,7 +42,7 @@ use JSON;
 # Plugin options
 # --------------------------------------------------
 
-my $plugin = Bloonix::Plugin->new(verion => "0.4");
+my $plugin = Bloonix::Plugin->new(verion => "0.5");
 
 $plugin->info(join(" ",
     "Please install PhantomJS on the server where the plugin is exexuted.",
@@ -60,6 +60,16 @@ $plugin->add_option(
     mandatory => 1,
     multiple => 0,
     description => "This is the workflow to simulate end-users on the website."
+);
+
+$plugin->add_option(
+    name => "ssl-protocol",
+    option => "ssl-protocol",
+    value => "proto",
+    value_type => "string",
+    regex => qr/^\w+\z/,
+    default => "tlsv1",
+    description => "The ssl protocol version to use for phantomjs (--ssl-protocol)."
 );
 
 $plugin->has_warning;
@@ -136,7 +146,12 @@ close $fh;
 
 my $timeout = $opt->{timeout} * 1000;
 my $ipc = Bloonix::IPC::Cmd->run(
-    command => "$phantomjs --ssl-protocol=tlsv1 --ignore-ssl-errors=yes $bloonix_wtrm_js file=$config_json noimg=true timeout=$timeout",
+    command => join(" ",
+        $phantomjs,
+        "--ssl-protocol=$opt->{ssl_protocol}",
+        "--ignore-ssl-errors=yes $bloonix_wtrm_js",
+        "file=$config_json noimg=true timeout=$timeout"
+    ),
     timeout => $opt->{timeout} + 15,
     kill_signal => 9
 );
